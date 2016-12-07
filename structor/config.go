@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 )
 
-const Root string = "/home/yukpiz/.go/extend/src/github.com/yukpiz/kipi-structor"
-
 type Config struct {
 	Data DataConfig `yaml:"data"`
 }
