@@ -1,0 +1,3 @@
+data:
+  ITEM_DB_FILE: "data/itemdb.xml"
+  JAPAN_TEXT_FILE: "data/itemdb.japan.txt"
