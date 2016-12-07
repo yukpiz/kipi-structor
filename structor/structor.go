@@ -14,15 +14,11 @@ import (
 //TODO: Uses $GOPATH
 const ROOT_PATH string = "/home/yukpiz/.go/extend/src/github.com/yukpiz/kipi-structor"
 
-type Data struct {
-	Items []model.Item
-}
-
-var MemoryData Data
+var MemoryData model.Data
 
 func Execute() error {
 	fmt.Println("Execute kipi-structor ===> (•ө•)♡")
-	MemoryData = Data{}
+	MemoryData = model.Data{}
 	//Load yaml configuration.
 	var config Config
 	fpath := filepath.Join(ROOT_PATH, "kipi.yml")
@@ -31,7 +27,8 @@ func Execute() error {
 	}
 
 	//Read japanese text file.
-	f, err := os.Open(config.Data.JapanTextFile)
+	fpath = filepath.Join(ROOT_PATH, config.Data.JapanTextFile)
+	f, err := os.Open(fpath)
 	if err != nil {
 		return err
 	}

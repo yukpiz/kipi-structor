@@ -1,0 +1,4 @@
+#!/bin/bash
+
+go test github.com/yukpiz/kipi-structor/structor
+go test github.com/yukpiz/kipi-structor/utf16
