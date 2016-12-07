@@ -17,17 +17,20 @@ type DataConfig struct {
 }
 
 func LoadConfig(path string, config *Config) error {
-	bytes := read(path)
+	bytes, err := read(path)
+	if err != nil {
+		return err
+	}
 	if err := yaml.Unmarshal(bytes, config); err != nil {
 		return err
 	}
 	return nil
 }
 
-func read(path string) []byte {
+func read(path string) ([]byte, error) {
 	bytes, err := ioutil.ReadFile(path)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
-	return bytes
+	return bytes, nil
 }
