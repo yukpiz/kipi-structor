@@ -5,6 +5,8 @@ import (
 )
 
 func main() {
-	structor.Execute()
+	if err := structor.Execute(); err != nil {
+		panic(err)
+	}
 	return
 }
