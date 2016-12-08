@@ -2,6 +2,7 @@ package structor
 
 import (
 	"bufio"
+	"encoding/xml"
 	"fmt"
 	"github.com/yukpiz/kipi-structor/model"
 	"github.com/yukpiz/kipi-structor/utf16"
@@ -14,11 +15,11 @@ import (
 //TODO: Uses $GOPATH
 const ROOT_PATH string = "/home/yukpiz/.go/extend/src/github.com/yukpiz/kipi-structor"
 
-var MemoryData model.Data
+var MemoryData *model.Data
 
 func Execute() error {
 	fmt.Println("Execute kipi-structor ===> (•ө•)♡")
-	MemoryData = model.Data{}
+	MemoryData = new(model.Data)
 	//Load yaml configuration.
 	var config Config
 	fpath := filepath.Join(ROOT_PATH, "kipi.yml")
@@ -34,6 +35,17 @@ func Execute() error {
 	}
 
 	if err := TextOnMemory(f); err != nil {
+		return err
+	}
+
+	//Read item xml file.
+	fpath = filepath.Join(ROOT_PATH, config.Data.ItemDbFile)
+	buf, err := utf16.ReadUTF16File(fpath)
+	if err != nil {
+		return err
+	}
+
+	if err := XmlOnMemory(buf); err != nil {
 		return err
 	}
 	return nil
@@ -53,12 +65,36 @@ func TextOnMemory(f *os.File) error {
 		if err != nil {
 			return err
 		}
-		name := string(seps[1])
-		MemoryData.Items = append(MemoryData.Items, model.Item{Id: id, JpName: name})
+		text := string(seps[1])
+		MemoryData.Texts = append(MemoryData.Texts, model.Text{TextId: id, JpText: text})
 		line += 1
 	}
 	if err := scanner.Err(); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func XmlOnMemory(buf []byte) error {
+	seps := strings.Split(string(buf), "\n")
+	for _, line := range seps {
+		if strings.Index(line, "Mabi_Item") < 0 {
+			continue
+		}
+
+		item := new(model.Item)
+		if err := xml.Unmarshal([]byte(line), item); err != nil {
+			return err
+		}
+		item.Convert()
+
+		text0 := MemoryData.FindFromId(item.JpNameId)
+		item.JpName = text0.JpText
+		text1 := MemoryData.FindFromId(item.JpDescId)
+		item.JpDesc = text1.JpText
+
+		MemoryData.Items = append(MemoryData.Items, *item)
 	}
 
 	return nil
