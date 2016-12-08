@@ -1,16 +1,17 @@
 package model
 
 type Data struct {
+	Texts []Text
 	Items []Item
 }
 
-func (d Data) FindFromId(id int) Item {
-	for _, item := range d.Items {
-		if item.Id == id {
-			return item
+func (d Data) FindFromId(id int) Text {
+	for _, text := range d.Texts {
+		if text.TextId == id {
+			return text
 		}
 	}
-	return Item{}
+	return Text{}
 }
 
 func (d Data) FindFromData(name string) {
